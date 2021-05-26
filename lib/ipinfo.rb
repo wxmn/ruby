@@ -40,24 +40,28 @@ class IPinfo::IPinfo
     end
 
     def details(ip_address = nil)
-        details = request_details(ip_address)
-        if details.key? :country
-            details[:country_name] =
-                @countries.fetch(details.fetch(:country), nil)
-        end
+        begin
+          details = request_details(ip_address)
+          if details.key? :country
+              details[:country_name] =
+                  @countries.fetch(details.fetch(:country), nil)
+          end
 
-        if details.key? :ip
-            details[:ip_address] =
-                IPAddr.new(details.fetch(:ip))
-        end
+          if details.key? :ip
+              details[:ip_address] =
+                  IPAddr.new(details.fetch(:ip))
+          end
 
-        if details.key? :loc
-            loc = details.fetch(:loc).split(',')
-            details[:latitude] = loc[0]
-            details[:longitude] = loc[1]
-        end
+          if details.key? :loc
+              loc = details.fetch(:loc).split(',')
+              details[:latitude] = loc[0]
+              details[:longitude] = loc[1]
+          end
 
-        Response.new(details)
+          Response.new(details)
+        rescue
+          {}
+        end
     end
 
     protected
